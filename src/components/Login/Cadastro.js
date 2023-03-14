@@ -21,7 +21,12 @@ export default function Cadastrar() {
             axios.post(`${URL_base}/auth/sign-up`, info)
                 .then(() => navigate("/"))
                 .catch(err => {
-                    alert(err.response.data.details[0])
+                    if (err.response.status === 409) {
+                        alert(err.response.data.message)
+                    } else {
+                        alert(err.response.data.message)
+                    }
+
                     setDisable(false)
                 })
         }
