@@ -20,7 +20,6 @@ export default function Login() {
             axios.post(`${URL_base}/auth/login`, user)
                 .then((e) => {
                     navigate("/hoje")
-                    console.log(e.data)
                 })
                 .catch(err => {
                     alert("email ou senha incorretos")
