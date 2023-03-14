@@ -15,20 +15,27 @@ export default function Login() {
     const [disabled, setDisable] = useState(false)
     const navigate = useNavigate()
 
+    useEffect(() => {
+        if (email !== "" && password !== "") {
+            axios.post(`${URL_base}/auth/login`, user)
+                .then((e) => {
+                    navigate("/hoje")
+                    console.log(e.data)
+                })
+                .catch(err => {
+                    alert("email ou senha incorretos")
+                    setLoading(false)
+                    setDisable(false)
+                })
+        }
+    }, [user])
+
     function form(e) {
         e.preventDefault()
         setUser({ email: email, password: password })
         setLoading(true)
         setDisable(true)
-
-        axios.post(`${URL_base}/auth/login`, user)
-            .then(() => navigate("/hoje"))
-            .catch(err => {
-                alert("email ou senha incorretos")
-                setLoading(false)
-                setDisable(false)
-            })
-
+        console.log(user)
     }
 
     return (
