@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { Oval } from "react-loader-spinner"
 
 export const ContainerLogin = styled.div`
     display: flex;
@@ -36,8 +37,10 @@ export const InputsLogin = styled.form`
         border-radius: 4.63636px;
         font-weight: 400;
         font-size: 21px;
-        text-align: center;
         color: #FFFFFF;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     a{
         font-weight: 400;

@@ -41,19 +41,6 @@ export default function Login() {
     return (
 
         <ContainerLogin>
-            <Oval
-                height={80}
-                width={80}
-                color="#4fa94d"
-                wrapperStyle={{}}
-                wrapperClass=""
-                visible={loading}
-                ariaLabel='oval-loading'
-                secondaryColor="#4fa94d"
-                strokeWidth={2}
-                strokeWidthSecondary={2}
-
-            />
             <div>
                 <img src={logo} />
             </div>
@@ -74,8 +61,21 @@ export default function Login() {
                     onChange={e => setPassword(e.target.value)}
                     type="password"
                     placeholder="senha" />
-                <button data-test="login-btn" disabled={disabled} type="submit">Entrar</button>
-                <Link data-test="signup-link" to={"/cadastrar"}>
+                <button data-test="login-btn" disabled={disabled} type="submit">
+                    {loading ? <Oval
+                        height={40}
+                        width={40}
+                        color="#ffffff"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={loading}
+                        ariaLabel='oval-loading'
+                        secondaryColor="#ababab"
+                        strokeWidth={2}
+                        strokeWidthSecondary={2}
+
+                    /> : "Entrar"}</button>
+                <Link data-test="signup-link" to={"/cadastro"}>
                     <div>Não tem uma conta? Cadastre-se aqui</div>
                 </Link>
             </InputsLogin>
