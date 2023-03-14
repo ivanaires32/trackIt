@@ -8,20 +8,19 @@ import { URL_base } from "../URL"
 
 export default function Cadastrar() {
     const [info, setInfo] = useState(undefined)
-    const [email, setEmail] = useState()
-    const [name, setName] = useState()
-    const [image, setImage] = useState()
-    const [password, setPassword] = useState()
-
-    useEffect(() => {
-        axios.post(`${URL_base}/auth/sign-up`, info)
-            .then(res => console.log(res.data))
-            .catch(err => alert(err.response.data.message))
-    }, [info])
+    const [email, setEmail] = useState("")
+    const [name, setName] = useState("")
+    const [image, setImage] = useState("")
+    const [password, setPassword] = useState("")
+    const [disabled, setDisable] = useState(false)
 
     function cadastro(e) {
         e.preventDefault()
         setInfo({ email: email, name: name, image: image, password: password })
+
+        axios.post(`${URL_base}/auth/sign-up`, info)
+            .then(res => console.log(res.data))
+            .catch(err => alert(err.response.data.message))
     }
 
     return (
@@ -30,24 +29,29 @@ export default function Cadastrar() {
                 <img src={logo} />
             </div>
             <InputsLogin onSubmit={cadastro}>
-                <input type="email"
+                <input
+                    disabled={disabled}
+                    type="email"
                     required
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="email"
                 />
                 <input
+                    disabled={disabled}
                     required
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="senha"
                 />
                 <input
+                    disabled={disabled}
                     value={name}
                     onChange={e => setName(e.target.value)}
                     required
                     placeholder="nome" />
                 <input
+                    disabled={disabled}
                     value={image}
                     onChange={e => setImage(e.target.value)}
                     required
