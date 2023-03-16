@@ -60,6 +60,7 @@ export default function NovoHabito({ setPost, post, userDados, display, setDispl
         <New data-test="habit-create-container" display={display}>
             <input
                 data-test="habit-name-input"
+                disabled={enviar}
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
