@@ -57,7 +57,7 @@ export default function NovoHabito({ setPost, post, userDados, display, setDispl
     }
 
     return (
-        <New display={display}>
+        <New data-test="habit-create-container" display={display}>
             <input
                 data-test="habit-name-input"
                 required
