@@ -25,10 +25,10 @@ export default function Hoje() {
     }
 
     useEffect(() => {
-        axios.get(`${URL_base}/habits/today`, config)
+        axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today`, config)
             .then(res => setHabitos(res.data))
             .catch(err => console.log(err.response.data))
-    }, [])
+    }, [check])
 
     useEffect(() => {
         setPercentagem(100 / habitos.length)
@@ -38,9 +38,9 @@ export default function Hoje() {
         if (!check.includes(i)) {
             setCheck([...check, i])
             setNum(num + percentagem)
-            axios.post(`${URL_base}/habits/${habitos.id}/check`, vazio, config)
+            axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${i}/check`, vazio, config)
                 .then(res => console.log(res.data))
-                .catch(err => console.log(err.response))
+                .catch(err => console.log(err.response.data))
         } else {
             const newList = check.filter((h) => h !== i)
             setCheck(newList)
@@ -48,9 +48,12 @@ export default function Hoje() {
             if (num === 0) {
                 setNum(0)
             }
+            console.log(num)
+            axios.post(`${URL_base}/habits/${i}/uncheck`, vazio, config)
+                .then(res => console.log(res.data))
+                .catch(err => console.log(err.response))
         }
 
-        console.log(habitos)
 
     }
     return (
@@ -58,17 +61,17 @@ export default function Hoje() {
             {TopFooter}
             <Topo color={num === 0 ? "#BABABA" : "#8FC549"}>
                 <h1 data-test="today">{d}</h1>
-                <h2 data-test="today-counter">{num === 0 ? "Nem um habito concluido ainda" : `${num.toFixed(0)}% dos hábitos concluídos`}</h2>
+                <h2 data-test="today-counter">{num !== 0 ? `${num.toFixed(0)}% dos hábitos concluídos` : "Nem um habito concluido ainda"}</h2>
             </Topo>
 
-            {habitos.map((h, i) => (
+            {habitos.map((h) => (
                 <BoxContainer data-test="today-habit-container" key={h.id}>
                     <TituloHabito>
                         <h1 data-test="today-habit-name">{h.name}</h1>
-                        <h2 data-test="today-habit-sequence">Sequência atual: 3 dias</h2>
-                        <h2 data-test="today-habit-record">Seu recorde: 5 dias</h2>
+                        <h2 data-test="today-habit-sequence" >{`Sequência atual: ${h.currentSequence} dias`}</h2>
+                        <h2 data-test="today-habit-record">{`Seu recorde: ${h.highestSequence} dias`}</h2>
                     </TituloHabito>
-                    <Check data-test="today-habit-check-btn" background={check.includes(i) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(i)}><GoCheck /></Check>
+                    <Check data-test="today-habit-check-btn" background={check.includes(h.id) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id)}><GoCheck /></Check>
                 </BoxContainer>
             ))
             }
