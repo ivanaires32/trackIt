@@ -14,7 +14,7 @@ export default function Hoje() {
     const [percentagem, setPercentagem] = useState()
     const [num, setNum] = useState(0)
     const [atual, setAtual] = useState(0)
-    const [maior, setMaior] = useState(0)
+    const [inicial, setInicial] = useState(true)
     const [igual, setIgual] = useState(false)
     const vazio = {}
     const dados = useContext(Dados)
@@ -29,9 +29,12 @@ export default function Hoje() {
 
     useEffect(() => {
         axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today`, config)
-            .then(res => setHabitos(res.data))
+            .then(res => {
+                setHabitos(res.data)
+                { habitos.map(() => setNum(0 + 1)) }
+            })
             .catch(err => console.log(err.response.data))
-    }, [])
+    }, [inicial])
 
     useEffect(() => {
         setPercentagem(100 / habitos.length)
@@ -41,14 +44,14 @@ export default function Hoje() {
         if (!check.includes(i)) {
             setCheck([...check, i])
             setNum(num + percentagem)
-            setAtual(atual + 1)
-            if (h === 0) {
-                setMaior(1)
-            }
-            if (atual === maior) {
-                setIgual(true)
-            }
             axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${i}/check`, vazio, config)
+                .then(() => {
+                    setAtual(atual + 1)
+                    setInicial(false)
+                    if (atual === h) {
+                        setIgual(true)
+                    }
+                })
                 .catch(err => console.log(err.response.data))
         } else {
             const newList = check.filter((h) => h !== i)
@@ -75,10 +78,13 @@ export default function Hoje() {
                 <BoxContainer data-test="today-habit-container" key={h.id}>
                     <TituloHabito>
                         <h1 data-test="today-habit-name">{h.name}</h1>
-                        <h2 data-test="today-habit-sequence" >{`Sequência atual: `}<Span color={igual ? "#8FC549" : "#666666"}>{`${atual} dias`}</Span></h2>
-                        <h2 data-test="today-habit-record">{`Seu recorde: `}<Span color={igual ? "#8FC549" : "#666666"}>{`${maior} dias`}</Span></h2>
+                        <h2 data-test="today-habit-sequence" >{`Sequência atual: `}<Span color={h.done ? "#8FC549" : "#666666"}>{`${inicial ? h.currentSequence : atual} dias`}</Span></h2>
+                        <h2 data-test="today-habit-record">{`Seu recorde: `}
+                            <Span color={h.done === true ? "#8FC549" : "#666666"}>
+                                {`${inicial === true && h.highestSequence > atual ? h.highestSequence : atual} dias`}</Span>
+                        </h2>
                     </TituloHabito>
-                    <Check data-test="today-habit-check-btn" background={check.includes(h.id) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id, h.highestSequence)}><GoCheck /></Check>
+                    <Check data-test="today-habit-check-btn" background={check.includes(h.id) || h.done === true ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id, h.highestSequence)}><GoCheck /></Check>
                 </BoxContainer>
             ))
             }
