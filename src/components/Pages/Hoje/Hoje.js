@@ -4,7 +4,7 @@ import Context from "../../../contexts/Context";
 import Dados from "../../../contexts/Dados";
 import { URL_base } from "../../../URL";
 import { GoCheck } from "react-icons/go"
-import { BoxContainer, Check, Container, TituloHabito, Topo } from "./style";
+import { BoxContainer, Check, Container, Span, TituloHabito, Topo } from "./style";
 import dayjs from "dayjs"
 
 export default function Hoje() {
@@ -13,6 +13,9 @@ export default function Hoje() {
     const [check, setCheck] = useState([])
     const [percentagem, setPercentagem] = useState()
     const [num, setNum] = useState(0)
+    const [atual, setAtual] = useState(0)
+    const [maior, setMaior] = useState(0)
+    const [igual, setIgual] = useState(false)
     const vazio = {}
     const dados = useContext(Dados)
     const d = dayjs().format('dddd - DD/MM')
@@ -28,31 +31,35 @@ export default function Hoje() {
         axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today`, config)
             .then(res => setHabitos(res.data))
             .catch(err => console.log(err.response.data))
-    }, [check])
+    }, [])
 
     useEffect(() => {
         setPercentagem(100 / habitos.length)
     }, [habitos])
 
-    function concluido(i) {
+    function concluido(i, h) {
         if (!check.includes(i)) {
             setCheck([...check, i])
             setNum(num + percentagem)
+            setAtual(atual + 1)
+            if (h === 0) {
+                setMaior(1)
+            }
+            if (atual === maior) {
+                setIgual(true)
+            }
             axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${i}/check`, vazio, config)
-                .then(res => console.log(res.data))
                 .catch(err => console.log(err.response.data))
         } else {
             const newList = check.filter((h) => h !== i)
             setCheck(newList)
             setNum(num - percentagem)
-            if (num === 0) {
-                setNum(0)
-            }
-            console.log(num)
-            axios.post(`${URL_base}/habits/${i}/uncheck`, vazio, config)
-                .then(res => console.log(res.data))
+            setAtual(atual - 1)
+            axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${i}/uncheck`, vazio, config)
                 .catch(err => console.log(err.response))
         }
+
+
 
 
     }
@@ -61,17 +68,17 @@ export default function Hoje() {
             {TopFooter}
             <Topo color={num === 0 ? "#BABABA" : "#8FC549"}>
                 <h1 data-test="today">{d}</h1>
-                <h2 data-test="today-counter">{num !== 0 ? `${num.toFixed(0)}% dos hábitos concluídos` : "Nem um habito concluido ainda"}</h2>
+                <h2 data-test="today-counter">{check.length !== 0 ? `${num.toFixed(0)}% dos hábitos concluídos` : "Nem um habito concluido ainda"}</h2>
             </Topo>
 
             {habitos.map((h) => (
                 <BoxContainer data-test="today-habit-container" key={h.id}>
                     <TituloHabito>
                         <h1 data-test="today-habit-name">{h.name}</h1>
-                        <h2 data-test="today-habit-sequence" >{`Sequência atual: ${h.currentSequence} dias`}</h2>
-                        <h2 data-test="today-habit-record">{`Seu recorde: ${h.highestSequence} dias`}</h2>
+                        <h2 data-test="today-habit-sequence" >{`Sequência atual: `}<Span color={igual ? "#8FC549" : "#666666"}>{`${atual} dias`}</Span></h2>
+                        <h2 data-test="today-habit-record">{`Seu recorde: `}<Span color={igual ? "#8FC549" : "#666666"}>{`${maior} dias`}</Span></h2>
                     </TituloHabito>
-                    <Check data-test="today-habit-check-btn" background={check.includes(h.id) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id)}><GoCheck /></Check>
+                    <Check data-test="today-habit-check-btn" background={check.includes(h.id) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id, h.highestSequence)}><GoCheck /></Check>
                 </BoxContainer>
             ))
             }

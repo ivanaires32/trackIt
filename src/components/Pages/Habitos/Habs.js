@@ -22,7 +22,7 @@ export default function Habs({ post, setPost, token }) {
     return (
         <>{post.map((h) => (
             <Habitos data-test="habit-container" key={h.id}>
-                <div>
+                <div key={h.id}>
                     <h1 data-test="habit-name">{h.name}</h1>
                     <Days>{semana.map((d, i) => (
                         <Day

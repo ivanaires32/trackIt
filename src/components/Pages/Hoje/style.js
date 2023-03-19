@@ -58,6 +58,9 @@ export const TituloHabito = styled.div`
         color: #666666;
     }
 `
+export const Span = styled.span`
+    color: ${props => props.color}
+`
 
 export const Check = styled.div`
     width: 69px;
