@@ -11,6 +11,8 @@ export default function Hoje() {
     const TopFooter = useContext(Context)
     const [habitos, setHabitos] = useState([])
     const [check, setCheck] = useState([])
+    const [percentagem, setPercentagem] = useState()
+    const [num, setNum] = useState(0)
     const vazio = {}
     const dados = useContext(Dados)
     const d = dayjs().format('dddd - DD/MM')
@@ -28,38 +30,49 @@ export default function Hoje() {
             .catch(err => console.log(err.response.data))
     }, [])
 
+    useEffect(() => {
+        setPercentagem(100 / habitos.length)
+    }, [habitos])
+
     function concluido(i) {
         if (!check.includes(i)) {
             setCheck([...check, i])
+            setNum(num + percentagem)
             axios.post(`${URL_base}/habits/${habitos.id}/check`, vazio, config)
                 .then(res => console.log(res.data))
                 .catch(err => console.log(err.response))
         } else {
             const newList = check.filter((h) => h !== i)
             setCheck(newList)
+            setNum(num - percentagem)
+            if (num === 0) {
+                setNum(0)
+            }
         }
 
+        console.log(habitos)
 
     }
     return (
         <Container>
             {TopFooter}
-            <Topo>
-                <h1>{d}</h1>
-                <h2>Nem um habito concluido ainda</h2>
+            <Topo color={num === 0 ? "#BABABA" : "#8FC549"}>
+                <h1 data-test="today">{d}</h1>
+                <h2 data-test="today-counter">{num === 0 ? "Nem um habito concluido ainda" : `${num.toFixed(0)}% dos hábitos concluídos`}</h2>
             </Topo>
 
             {habitos.map((h, i) => (
-                <BoxContainer key={h.id}>
+                <BoxContainer data-test="today-habit-container" key={h.id}>
                     <TituloHabito>
-                        <h1>Ler 1 capitulo do livro</h1>
-                        <h2>Sequência atual: 3 dias</h2>
-                        <h2>Seu recorde: 5 dias</h2>
+                        <h1 data-test="today-habit-name">{h.name}</h1>
+                        <h2 data-test="today-habit-sequence">Sequência atual: 3 dias</h2>
+                        <h2 data-test="today-habit-record">Seu recorde: 5 dias</h2>
                     </TituloHabito>
-                    <Check background={check.includes(i) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(i)}><GoCheck /></Check>
+                    <Check data-test="today-habit-check-btn" background={check.includes(i) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(i)}><GoCheck /></Check>
                 </BoxContainer>
-            ))}
+            ))
+            }
 
-        </Container>
+        </Container >
     )
 }
