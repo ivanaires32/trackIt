@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Day, Days, Finish, New } from "./styles";
 import { Oval } from "react-loader-spinner";
 import axios from "axios";
 import { URL_base } from "../../../URL";
 import { useNavigate } from "react-router-dom";
+import Dados from "../../../contexts/Dados";
 
-export default function NovoHabito({ setPost, post, userDados, display, setDisplay }) {
+export default function NovoHabito({ display, setDisplay }) {
     const semana = ["D", "S", "T", "Q", "Q", "S", "S"]
     const [name, setName] = useState("")
     const [enviar, setEnviar] = useState(false)
     const [diasSelecionados, setDiasSelecionados] = useState([])
+    const dados = useContext(Dados)
     const navigate = useNavigate()
     const config = {
         headers: {
-            "Authorization": `Bearer ${userDados.token}`
+            "Authorization": `Bearer ${dados.userDados.token}`
         }
     }
 

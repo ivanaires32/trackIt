@@ -3,16 +3,18 @@ import { Link, useNavigate } from "react-router-dom"
 import logo from "../../img/logo.png"
 import { ContainerLogin, InputsLogin } from "./style"
 import { URL_base } from "../../URL"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Oval } from "react-loader-spinner"
+import Dados from "../../contexts/Dados"
 
 
-export default function Login({ setUserDados }) {
+export default function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [user, setUser] = useState({ email: "", password: "" })
     const [loading, setLoading] = useState(false) // trocar por disabled que faz a mesma coisa
     const [disabled, setDisable] = useState(false)
+    const dados = useContext(Dados)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -20,7 +22,7 @@ export default function Login({ setUserDados }) {
             axios.post(`${URL_base}/auth/login`, user)
                 .then((res) => {
                     navigate("/hoje")
-                    setUserDados(res.data)
+                    dados.setUserDados(res.data)
                 })
                 .catch(() => {
                     alert("email ou senha incorretos")

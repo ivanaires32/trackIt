@@ -1,6 +1,5 @@
 import { createContext } from "react";
-import Fixos from "../components/TopFooter/Fixos";
 
-const Context = createContext(<Fixos />)
+const Context = createContext({})
 
 export default Context

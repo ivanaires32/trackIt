@@ -5,15 +5,17 @@ import NovoHabito from "./NovoHabito";
 import axios from "axios";
 import { URL_base } from "../../../URL";
 import Habs from "./Habs";
+import Dados from "../../../contexts/Dados";
 
-export default function Habitos({ userDados }) {
+export default function Habitos() {
     const TopFooter = useContext(Context)
     const [display, setDisplay] = useState("none")
     const [habitos, setHabitos] = useState([])
     const [post, setPost] = useState([])
+    const dadosUser = useContext(Dados)
     const config = {
         headers: {
-            "Authorization": `Bearer ${userDados.token}`
+            "Authorization": `Bearer ${dadosUser.userDados.token}`
         }
     }
 
@@ -34,12 +36,12 @@ export default function Habitos({ userDados }) {
                     <button data-test="habit-create-btn" onClick={() => setDisplay("flex")}>+</button>
                 </MeusHabitos>
 
-                <NovoHabito data-test="habit-create-container" userDados={userDados} display={display} setDisplay={setDisplay} />
+                <NovoHabito data-test="habit-create-container" display={display} setDisplay={setDisplay} />
 
                 <div>
                     {habitos.length === 0 ?
                         "Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!"
-                        : <Habs post={post} setPost={setPost} token={userDados.token} />}
+                        : <Habs post={post} setPost={setPost} token={dadosUser.userDados.token} />}
                 </div>
             </Container>
         </>
