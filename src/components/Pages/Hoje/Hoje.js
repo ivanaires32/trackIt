@@ -98,11 +98,11 @@ export default function Hoje() {
 
                         <h2 data-test="today-habit-sequence" >{`Sequência atual: `}
                             <Span color={check.includes(h.id) || h.done === true ? "#8FC549" : "#666666"}>{
-                                `${check.includes(h.id) || h.done === true ? h.currentSequence + 1 : h.currentSequence} dias`}</Span></h2>
+                                `${check.includes(h.id) ? h.currentSequence + 1 : h.currentSequence} dias`}</Span></h2>
 
                         <h2 data-test="today-habit-record">{`Seu recorde: `}
                             <Span color={check.includes(h.id) && h.highestSequence === h.currentSequence || h.done === true ? "#8FC549" : "#666666"}>
-                                {`${check.includes(h.id) || h.done === true ? h.highestSequence + 1 : h.highestSequence} dias`}</Span>
+                                {`${check.includes(h.id) ? h.highestSequence + 1 : h.highestSequence} dias`}</Span>
                         </h2>
                     </TituloHabito>
                     <Check data-test="today-habit-check-btn" background={check.includes(h.id) || h.done === true ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id, h.done)}><GoCheck /></Check>
