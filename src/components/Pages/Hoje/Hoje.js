@@ -13,6 +13,7 @@ export default function Hoje() {
     const [check, setCheck] = useState([])
     const [percentagem, setPercentagem] = useState()
     const [num, setNum] = useState(0)
+    const [dentro, setDentro] = useState(false)
     const vazio = {}
     const dados = useContext(Dados)
     const [d, setD] = useState(dayjs().format('dddd'))
@@ -56,6 +57,7 @@ export default function Hoje() {
 
             if (habitos[i].done === true) {
                 calc += 1
+                setCheck([...check, habitos[i].id])
             }
 
         }
@@ -64,9 +66,13 @@ export default function Hoje() {
 
 
 
-    function concluido(i, h) {
-        if (h === true) {
-            return
+    function concluido(i) {
+        if (check.includes(i)) {
+            const newList = check.filter((h) => h !== i)
+            setCheck(newList)
+            setNum(num - percentagem)
+            axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${i}/uncheck`, vazio, config)
+                .catch(err => console.log(err.response))
         }
         else if (!check.includes(i)) {
             setCheck([...check, i])
@@ -86,9 +92,9 @@ export default function Hoje() {
     return (
         <Container>
             {TopFooter}
-            <Topo color={num === 0 ? "#BABABA" : "#8FC549"}>
+            <Topo color={check.length === 0 ? "#BABABA" : "#8FC549"}>
                 <h1 data-test="today">{d + " - " + mes}</h1>
-                <h2 data-test="today-counter">{num !== 0 ? `${num.toFixed(0)}% dos hábitos concluídos` : "Nenhum hábito concluído ainda"}</h2>
+                <h2 data-test="today-counter">{check.length !== 0 ? `${num.toFixed(0)}% dos hábitos concluídos` : "Nenhum hábito concluído ainda"}</h2>
             </Topo>
 
             {habitos.map((h) => (
@@ -97,15 +103,15 @@ export default function Hoje() {
                         <h1 data-test="today-habit-name">{h.name}</h1>
 
                         <h2 data-test="today-habit-sequence" >{`Sequência atual: `}
-                            <Span color={check.includes(h.id) || h.done === true ? "#8FC549" : "#666666"}>{
+                            <Span color={check.includes(h.id) ? "#8FC549" : "#666666"}>{
                                 `${check.includes(h.id) ? h.currentSequence + 1 : h.currentSequence} dias`}</Span></h2>
 
                         <h2 data-test="today-habit-record">{`Seu recorde: `}
-                            <Span color={check.includes(h.id) && h.highestSequence === h.currentSequence || h.done === true ? "#8FC549" : "#666666"}>
+                            <Span color={check.includes(h.id) && h.highestSequence === h.currentSequence ? "#8FC549" : "#666666"}>
                                 {`${check.includes(h.id) ? h.highestSequence + 1 : h.highestSequence} dias`}</Span>
                         </h2>
                     </TituloHabito>
-                    <Check data-test="today-habit-check-btn" background={check.includes(h.id) || h.done === true ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id, h.done)}><GoCheck /></Check>
+                    <Check data-test="today-habit-check-btn" background={check.includes(h.id) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id, h.done)}><GoCheck /></Check>
                 </BoxContainer>
             ))
             }
