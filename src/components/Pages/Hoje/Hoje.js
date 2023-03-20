@@ -13,6 +13,7 @@ export default function Hoje() {
     const [check, setCheck] = useState([])
     const [percentagem, setPercentagem] = useState()
     const [num, setNum] = useState(0)
+    const [dentro, setDentro] = useState(false)
     const vazio = {}
     const dados = useContext(Dados)
     const [d, setD] = useState(dayjs().format('dddd'))
@@ -67,7 +68,7 @@ export default function Hoje() {
 
     function concluido(i) {
         if (check.includes(i)) {
-
+            setDentro(false)
             const newList = check.filter((h) => h !== i)
             setCheck(newList)
             setNum(num - percentagem)
@@ -75,6 +76,7 @@ export default function Hoje() {
                 .catch(err => console.log(err.response))
         }
         else if (!check.includes(i)) {
+            setDentro(true)
             setCheck([...check, i])
             setNum(num + percentagem)
             axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${i}/check`, vazio, config)
@@ -103,12 +105,12 @@ export default function Hoje() {
                         <h1 data-test="today-habit-name">{h.name}</h1>
 
                         <h2 data-test="today-habit-sequence" >{`Sequência atual: `}
-                            <Span color={check.includes(h.id) ? "#8FC549" : "#666666"}>{
-                                `${check.includes(h.id) ? h.currentSequence + 1 : h.currentSequence} dias`}</Span></h2>
+                            <Span color={check.includes(h.id) || dentro === true ? "#8FC549" : "#666666"}>{
+                                `${check.includes(h.id) || dentro === true ? h.currentSequence + 1 : h.currentSequence} dias`}</Span></h2>
 
                         <h2 data-test="today-habit-record">{`Seu recorde: `}
-                            <Span color={h.highestSequence === h.currentSequence && check.includes(h.id) || check.includes(h.id) ? "#8FC549" : "#666666"}>
-                                {`${check.includes(h.id) ? h.highestSequence + 1 : h.highestSequence} dias`}</Span>
+                            <Span color={h.highestSequence === h.currentSequence && h.currentSequence !== 0 || check.includes(h.id) && dentro === true ? "#8FC549" : "#666666"}>
+                                {`${check.includes(h.id) || dentro === true ? h.highestSequence + 1 : h.highestSequence} dias`}</Span>
                         </h2>
                     </TituloHabito>
                     <Check data-test="today-habit-check-btn" background={check.includes(h.id) ? "#8FC549" : "#EBEBEB"} onClick={() => concluido(h.id, h.done)}><GoCheck /></Check>
