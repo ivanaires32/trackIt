@@ -82,7 +82,7 @@ export default function Hoje() {
                         <h1 data-test="today-habit-name">{h.name}</h1>
 
                         <h2 data-test="today-habit-sequence" >{`Sequência atual: `}
-                            <Span color={check.includes(h.id) && h.highestSequence === h.currentSequence ? "#8FC549" : "#666666"}>{
+                            <Span color={check.includes(h.id) ? "#8FC549" : "#666666"}>{
                                 `${check.includes(h.id) ? h.currentSequence + 1 : h.currentSequence} dias`}</Span></h2>
 
                         <h2 data-test="today-habit-record">{`Seu recorde: `}
